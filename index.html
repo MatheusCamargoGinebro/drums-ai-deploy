@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bateria Virtual</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Bateria Virtual</h1>
+    <p id="kit-badge" class="badge" aria-live="polite"></p>
+  </header>
+
+  <main>
+    <!-- Os pads são gerados por JS a partir de PIECES (js/config.js) -->
+    <section id="stage" class="stage" role="group" aria-label="Peças da bateria"></section>
+
+    <section class="controls" aria-label="Controles">
+      <label>Kit
+        <select id="kit-select" class="ctrl"></select>
+      </label>
+      <label>Volume
+        <input id="volume" class="ctrl" type="range" min="0" max="1" step="0.01" aria-label="Volume">
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="sustain" role="switch">
+        <span class="track" aria-hidden="true"></span>
+        <span>Modo sustentado<small>som contínuo enquanto pressionado</small></span>
+      </label>
+      <button id="reset" class="ctrl" type="button">Restaurar Kit Padrão</button>
+    </section>
+
+    <!-- Editor do kit Custom (preenchido por JS; visível só com o kit Custom) -->
+    <section id="editor" class="editor" aria-label="Editor do kit Custom" hidden></section>
+
+    <details class="help">
+      <summary class="ctrl">Ajuda · atalhos e personalização de teclas</summary>
+      <p>Clique, toque ou use o teclado. Vários toques simultâneos funcionam.</p>
+      <table>
+        <thead><tr><th scope="col">Instrumento</th><th scope="col">Tecla (clique para alterar)</th></tr></thead>
+        <tbody id="help-body"></tbody>
+      </table>
+    </details>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <!-- Scripts clássicos (não módulos) para funcionar abrindo o arquivo direto (file://) -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+/* ===== 1. TOKENS DE TEMA =====
+   Valores padrão; cada kit sobrescreve via JS (UIController.applyKit). */
+:root {
+  --bg: #14151a; --surface: #1e2028; --text: #f1f1f4; --muted: #9a9cab;
+  --accent: #ff9f43; --accent2: #d9b45a; --drum: #4a4d5c;
+  --radius: 50%; --radiusWide: 2rem; --texture: none;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --speed: .18s;
+}
+
+/* ===== 2. BASE (mobile first) ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
+  background: var(--bg); color: var(--text); font-family: var(--font);
+  transition: color .4s;
+}
+main { width: 100%; max-width: 960px; margin: 0 auto; padding: 0 .75rem 2rem; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .9rem 1rem; }
+.topbar h1 { margin: 0; font-size: 1.15rem; letter-spacing: .08em; text-transform: uppercase; }
+.badge { margin: 0; padding: .25rem .8rem; border-radius: 99px; font-size: .8rem;
+  background: var(--surface); color: var(--accent); border: 1px solid var(--accent); }
+
+/* ===== 3. PALCO E PADS ===== */
+.stage {
+  display: grid; gap: clamp(.4rem, 2vw, 1.1rem); padding: clamp(.6rem, 3vw, 2rem);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas: "crash tom1 tom2 ride" "hatc snare floor hato" "kick kick kick kick";
+  background-color: var(--surface); background-image: var(--texture);
+  border-radius: 1.2rem; box-shadow: inset 0 0 60px #0007;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.stage.switching { animation: swap .45s ease-out; }
+
+.pad {
+  position: relative; aspect-ratio: 1; min-width: 0; padding: 0; border: 0;
+  border-radius: var(--radius); color: var(--text); font: inherit; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--drum) 65%, #fff), var(--drum) 65%);
+  box-shadow: 0 6px 14px #0009, inset 0 0 0 3px #ffffff18;
+  transition: box-shadow var(--speed), filter var(--speed);
+}
+.pad[data-type="cymbal"], .pad[data-type="hat"] {
+  color: #1b1b1b;
+  background: radial-gradient(circle at 35% 30%, #fffa, var(--accent2) 55%, color-mix(in srgb, var(--accent2) 45%, #000));
+}
+.pad[data-id="kick"] { aspect-ratio: auto; height: clamp(64px, 15vw, 110px); border-radius: var(--radiusWide); }
+.pad:hover { filter: brightness(1.12); }
+.pad:focus-visible, .ctrl:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.pad__name { font-size: clamp(.55rem, 2.3vw, .9rem); font-weight: 600; text-align: center; line-height: 1.1; padding: 0 .2rem; }
+
+kbd {
+  min-width: 1.9em; padding: .15em .5em; border-radius: .4em; text-align: center;
+  font: 700 clamp(.7rem, 2.4vw, 1rem)/1.2 var(--font);
+  background: #000a; color: var(--accent); border: 1px solid #ffffff30;
+}
+
+/* Impacto: aperto + brilho + anel de onda (reiniciado via JS removendo/adicionando .hit) */
+.pad::after { content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+  border: 3px solid var(--accent); pointer-events: none; }
+.pad.hit { animation: hit .3s ease-out; }
+.pad.hit::after { animation: ring .5s ease-out; }
+@keyframes hit {
+  0% { transform: scale(.92); filter: brightness(1.8); box-shadow: 0 0 40px 10px var(--accent); }
+  100% { transform: none; }
+}
+@keyframes ring { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(1.35); } }
+@keyframes swap { from { opacity: .25; transform: scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ===== 4. CONTROLES E AJUDA ===== */
+.controls { display: flex; flex-wrap: wrap; align-items: end; gap: .8rem; margin: 1rem 0; }
+.controls label { display: flex; flex-direction: column; gap: .3rem; font-size: .8rem; color: var(--muted); flex: 1 1 140px; }
+.ctrl { font: inherit; color: var(--text); background: var(--surface); border: 1px solid #ffffff25;
+  border-radius: .6rem; padding: .6rem .8rem; cursor: pointer; transition: border-color var(--speed), background var(--speed); }
+.ctrl:hover { border-color: var(--accent); }
+input.ctrl { padding: 0; accent-color: var(--accent); height: 2.4rem; }
+#reset { flex: 1 1 100%; background: var(--accent); color: #111; font-weight: 700; border: 0; }
+.help { background: var(--surface); border-radius: .8rem; padding: .5rem; }
+.help summary { list-style: none; background: transparent; border: 0; }
+.help p { color: var(--muted); font-size: .85rem; margin: .5rem; }
+.help table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.help th, .help td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #ffffff14; }
+.status { min-height: 1.4rem; color: var(--accent); font-size: .85rem; }
+
+/* ===== 5. RESPONSIVO ===== */
+@media (min-width: 640px) {
+  .topbar h1 { font-size: 1.4rem; }
+  #reset { flex: 0 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) { .pad.hit, .pad.hit::after, .stage.switching { animation-duration: .01s; } }
+
+/* ===== 6. MODO SUSTENTADO, SWITCH, EDITOR, REMAPEAMENTO ===== */
+.pad.held { filter: brightness(1.4); transform: scale(.96); box-shadow: 0 0 34px 8px var(--accent); }
+.switch { display: flex !important; flex-direction: row !important; align-items: center; gap: .6rem; cursor: pointer; color: var(--text) !important; }
+.switch input { position: absolute; opacity: 0; }
+.switch small { display: block; color: var(--muted); font-size: .7rem; }
+.switch .track { flex: none; width: 2.8rem; height: 1.5rem; border-radius: 99px; background: #ffffff25; position: relative; transition: background var(--speed); }
+.switch .track::after { content: ""; position: absolute; top: .2rem; left: .2rem; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #fff; transition: transform var(--speed); }
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track::after { transform: translateX(1.3rem); }
+.switch input:focus-visible + .track { outline: 3px solid var(--accent); outline-offset: 3px; }
+.editor { background: var(--surface); border-radius: .8rem; padding: .8rem; margin-bottom: 1rem; }
+.editor h2 { margin: 0 0 .6rem; font-size: 1rem; color: var(--accent); }
+.editor .global, .editor .params { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.editor label { display: flex; flex-direction: column; gap: .25rem; font-size: .75rem; color: var(--muted); }
+.editor output { color: var(--text); font-weight: 600; }
+.editor input[type=range] { accent-color: var(--accent); width: 100%; }
+.editor input[type=color] { width: 100%; height: 2rem; border: 0; padding: 0; background: none; }
+.piece-edit { border-top: 1px solid #ffffff14; margin-top: .6rem; padding-top: .4rem; }
+.piece-edit summary { cursor: pointer; font-weight: 600; padding: .3rem 0; }
+.keybtn { min-width: 6.5rem; padding: .3rem .6rem; }
+.keybtn.waiting { border-color: var(--accent); color: var(--accent); }
